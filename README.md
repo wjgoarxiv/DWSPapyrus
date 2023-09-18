@@ -1,6 +1,9 @@
 # DWSPapyrus
 ::자동 DWStemp (동원 프로그램) 그래프 제작 리포지토리::
 
+## NEWS
+🥳 @2023-09-19: V1.1이 업데이트되었어요! [이 곳](https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus)을 확인해보세요!
+
 ## 개요
 ☝🏻 이 리포지토리는 DWStemp (동원 SM 사 소프트웨어) 를 사용하는 인턴, 대학원생, 혹은 연구자 분들께서 실험 데이터를 더욱 빠르게 확인할 수 있게 해드리기 위해 제작되었어요.</br>
 🔍 Raw CSV 파일을 넣고, 원하는 그래프 형태 및 설정을 하신 뒤에 버튼을 누르면 그래프를 미리볼 수 있을 뿐만 아니라 고화질의 PNG 파일 또한 확인해보실 수 있어요. 
@@ -19,11 +22,12 @@
 8. `Time unit selection`을 통해 시간 단위를 설정하세요 (x축에 시간을 넣는 경우에만).
 9. `Plot data` 버튼을 통해 그래프를 확인하세요. 디렉토리도 확인해보세요. `PLOT.png`이라는 이름의 그래프 파일이 출력된답니다.
     </br><img src = "./step3.png" width="40%"></br>
+10. x축과 y축의 스케일을 유저가 조절할 수 있어요. `X scale adjustment (min, max)`, `Y scale adjustment (min, max)`에 `0, 200`, `100, 500`과 같이 최소, 최댓값을 입력하면 돼요. 
 
 ## 설치 방법
-https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus-v1.0 </br>
+https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus </br></br>
 위 링크를 누르고 들어가 `.dmg` (MacOS를 사용하시는 경우) 혹은 `.exe` (Windows를 사용하시는 경우)를 다운 받아 설치해주세요.</br>
 처음 실행 시 실행에 다소 많은 시간이 걸릴 수 있어요. 프로그램 실행 시 바이러스로 오인될 수 있는데, 필자는 해당 프로그램을 통해 그 어떤 정보도 전송받지 않음을 말씀드립니다 (소스 코드를 확인해주세요). 
 
 ---------------------------------------------------------------------------------------------------------------------
-🎙️ 더 많은 정보를 얻고 싶으시거나 피드백을 남기시고 싶으시면, [제 깃허브 링크](https://github.com/wjgoarxiv/DWSPapyrus) 에 방문해주세요! 감사합니다. 
+🎙️ 더 많은 정보를 얻고 싶으시거나 피드백을 남기시고 싶으시면, [제 깃허브 링크](https://github.com/wjgoarxiv/)에 방문해주세요! 감사합니다. 
