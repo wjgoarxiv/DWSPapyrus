@@ -61,145 +61,184 @@ rcparams()
 class DWSPapyrusGUI:
     def __init__(self, master):
         self.master = master
-        master.title("DWSPapyrus V1.0")
+        master.title("DWSPapyrus V1.1")
 
-        self.x_var_var = tk.StringVar(value="Temperature")
+        self.x_var_var = tk.StringVar(value="Temperature") # Define the x_var_var variable
         self.y_var_var = tk.StringVar(value="Pressure")
-        self.x_label_var = tk.StringVar(value="Temperature (℃)")
+        self.x_label_var = tk.StringVar(value="Temperature (Celcius)")
         self.y_label_var = tk.StringVar(value="Pressure (bar)")
         self.dpi_var = tk.StringVar(value="200")
         self.transparent_var = tk.BooleanVar(value=True)
         self.time_unit_var = tk.StringVar(value="Seconds")
         self.line_width = tk.IntVar(value=2)
-        self.line_or_scatter = tk.StringVar(value="Scatter")
+        self.line_or_scatter = tk.StringVar(value="Line")
+        self.check_rcparams = tk.BooleanVar(value=True)
+        self.x_scale = tk.StringVar(value="0, 100")
+        self.y_scale = tk.StringVar(value="0, 100")
 
         # Create the title label
-        self.title_label = tk.Label(master, text="DWSPapyrus V1.0", font=("Arial", 24))
+        self.title_label = tk.Label(master, text="DWSPapyrus V1.1", font=("Arial", 24))
         self.title_label.pack()
 
         # Create the author label
         self.author_label = tk.Label(master, text="by @wjgoarxiv (https://github.com/wjgoarxiv)", font=("Arial", 12))
         self.author_label.pack()
 
+        # Create the data loading frame
+        self.data_loading_frame = tk.Frame(master)
+        self.data_loading_frame.pack()
+
         # Create the pressure sensor selection label
-        self.pressure_label = tk.Label(master, text="Pressure sensor selection:")
-        self.pressure_label.pack()
+        self.pressure_label = tk.Label(self.data_loading_frame, text="Pressure sensor selection:")
+        self.pressure_label.pack(side=tk.LEFT)
 
         # Create the pressure sensor selection dropdown menu
         self.pressure_var = tk.StringVar(master)
         self.pressure_var.set("1") # Default value
-        self.pressure_dropdown = tk.OptionMenu(master, self.pressure_var, "1", "2")
-        self.pressure_dropdown.pack()
+        self.pressure_dropdown = tk.OptionMenu(self.data_loading_frame, self.pressure_var, "1", "2")
+        self.pressure_dropdown.pack(side=tk.LEFT)
 
         # Create the temperature sensor selection label
-        self.temperature_label = tk.Label(master, text="Temperature sensor selection:")
-        self.temperature_label.pack()
+        self.temperature_label = tk.Label(self.data_loading_frame, text="Temperature sensor selection:")
+        self.temperature_label.pack(side=tk.LEFT)
 
         # Create the temperature sensor selection dropdown menu
         self.temperature_var = tk.StringVar(master)
         self.temperature_var.set("1") # Default value
-        self.temperature_dropdown = tk.OptionMenu(master, self.temperature_var, "1", "2", "3", "4")
-        self.temperature_dropdown.pack()
+        self.temperature_dropdown = tk.OptionMenu(self.data_loading_frame, self.temperature_var, "1", "2", "3", "4")
+        self.temperature_dropdown.pack(side=tk.LEFT)
 
         # Create the load button
-        self.load_button = tk.Button(master, text="Load the raw CSV", command=self.load_csv) 
-        self.load_button.pack()
+        self.load_button = tk.Button(self.data_loading_frame, text="Load the raw CSV", command=self.load_csv) 
+        self.load_button.pack(side=tk.LEFT)
+
+        # Create the data preview frame
+        self.data_preview_frame = tk.Frame(master)
+        self.data_preview_frame.pack()
 
         # Create the data preview label
-        self.data_preview_label = tk.Label(master, text="Data preview:", font=("Arial", 12))
-        self.data_preview_label.pack()
+        self.data_preview_label = tk.Label(self.data_preview_frame, text="Data preview:", font=("Arial", 12))
+        self.data_preview_label.pack(side=tk.LEFT)
 
         # Create the data preview text box
-        self.data_preview_text = tk.Text(master, height=10, width=50)
-        self.data_preview_text.pack()
+        self.data_preview_text = tk.Text(self.data_preview_frame, height=10, width=50)
+        self.data_preview_text.pack(side=tk.LEFT)
+
+        # Create the treated data frame
+        self.treated_data_frame = tk.Frame(master)
+        self.treated_data_frame.pack()
 
         # Create the treated data label
-        self.treated_data_label = tk.Label(master, text="Treated data:", font=("Arial", 12))
-        self.treated_data_label.pack()
+        self.treated_data_label = tk.Label(self.treated_data_frame, text="Treated data:", font=("Arial", 12))
+        self.treated_data_label.pack(side=tk.LEFT)
 
         # Create the treated data text box
-        self.treated_data_text = tk.Text(master, height=10, width=50)
-        self.treated_data_text.pack()
+        self.treated_data_text = tk.Text(self.treated_data_frame, height=10, width=50)
+        self.treated_data_text.pack(side=tk.LEFT)
+
+        # Create the plot configuration frame
+        self.plot_config_frame = tk.Frame(master)
+        self.plot_config_frame.pack()
 
         # Create the x variable selection label
-        self.x_var_label = tk.Label(master, text="X variable selection:")
-        self.x_var_label.pack()
+        self.x_var_label = tk.Label(self.plot_config_frame, text="X variable selection:")
+        self.x_var_label.pack(side=tk.LEFT)
 
         # Create the x variable selection dropdown menu
-        self.x_var_dropdown = tk.OptionMenu(master, self.x_var_var, "Time", "Temperature", "Pressure")
-        self.x_var_dropdown.pack()
+        self.x_var_dropdown = tk.OptionMenu(self.plot_config_frame, self.x_var_var, "Time", "Temperature", "Pressure")
+        self.x_var_dropdown.pack(side=tk.LEFT)
 
         # Create the y variable selection label
-        self.y_var_label = tk.Label(master, text="Y variable selection:")
-        self.y_var_label.pack()
+        self.y_var_label = tk.Label(self.plot_config_frame, text="Y variable selection:")
+        self.y_var_label.pack(side=tk.LEFT)
 
         # Create the y variable selection dropdown menu
-        self.y_var_dropdown = tk.OptionMenu(master, self.y_var_var, "Pressure", "Temperature")
-        self.y_var_dropdown.pack()
+        self.y_var_dropdown = tk.OptionMenu(self.plot_config_frame, self.y_var_var, "Pressure", "Temperature")
+        self.y_var_dropdown.pack(side=tk.LEFT)
 
         # Create the x label selection label
-        self.x_label_label = tk.Label(master, text="Write the x label:")
+        self.x_label_label = tk.Label(self.plot_config_frame, text="Write the x label:")
         self.x_label_label.pack()
 
         # Create the x label selection menu
-        self.x_label_dropdown = tk.Entry(master, textvariable=self.x_label_var)
+        self.x_label_dropdown = tk.Entry(self.plot_config_frame, textvariable=self.x_label_var)
         self.x_label_dropdown.pack()
 
         # Create the y label selection label
-        self.y_label_label = tk.Label(master, text="Write the y label:")
+        self.y_label_label = tk.Label(self.plot_config_frame, text="Write the y label:")
         self.y_label_label.pack()
 
         # Create the y label selection text box
-        self.y_label_dropdown = tk.Entry(master, textvariable=self.y_label_var)
+        self.y_label_dropdown = tk.Entry(self.plot_config_frame, textvariable=self.y_label_var)
         self.y_label_dropdown.pack()
 
+        # Create the x-scale adjustment label (min, max)
+        self.x_scale_label = tk.Label(self.plot_config_frame, text="X scale adjustment (min, max):")
+        self.x_scale_label.pack()
+
+        # Create the x-scale adjustment text box (min, max)
+        self.x_scale_entry = tk.Entry(self.plot_config_frame) 
+        self.x_scale_entry.pack()
+
+        # Create the y-scale adjustment label (min, max)
+        self.y_scale_label = tk.Label(self.plot_config_frame, text="Y scale adjustment (min, max):")
+        self.y_scale_label.pack()
+
+        # Create the y-scale adjustment text box (min, max)
+        self.y_scale_entry = tk.Entry(self.plot_config_frame)
+        self.y_scale_entry.pack()
+
         # Create the DPI selection label
-        self.dpi_label = tk.Label(master, text="DPI selection:")
+        self.dpi_label = tk.Label(self.plot_config_frame, text="DPI selection:")
         self.dpi_label.pack()
 
         # Create the DPI selection text box
-        self.dpi_entry = tk.Entry(master, textvariable=self.dpi_var)
+        self.dpi_entry = tk.Entry(self.plot_config_frame, textvariable=self.dpi_var)
         self.dpi_entry.pack()
 
         # Create the transparency selection box
-        self.transparent_label = tk.Label(master, text="Transparent background:")
+        self.transparent_label = tk.Label(self.plot_config_frame, text="Transparent background:")
         self.transparent_label.pack()
 
         # Create the transparency selection check box
-        self.transparent_check = tk.Checkbutton(master, variable=self.transparent_var)
+        self.transparent_check = tk.Checkbutton(self.plot_config_frame, variable=self.transparent_var)
         self.transparent_check.pack()
 
         # Create the line width selection label
-        self.line_width_label = tk.Label(master, text="Line width (Markersize) selection:")
-        self.line_width_label.pack()
+        self.line_width_label = tk.Label(self.plot_config_frame, text="Line width (Markersize) selection:")
+        self.line_width_label.pack(side=tk.LEFT)
 
         # Create the line width selection text box
-        self.line_width_entry = tk.Entry(master, textvariable=self.line_width)
-        self.line_width_entry.pack()
+        self.line_width_entry = tk.Entry(self.plot_config_frame, textvariable=self.line_width)
+        self.line_width_entry.pack(side=tk.LEFT)
 
         # Create the time unit selection label
-        self.time_unit_label = tk.Label(master, text="Time unit selection:")
-        self.time_unit_label.pack()
+        self.time_unit_label = tk.Label(self.plot_config_frame, text="Time unit selection:")
+        self.time_unit_label.pack(side=tk.LEFT)
 
         # Create the time unit selection dropdown menu
-        self.time_unit_dropdown = tk.OptionMenu(master, self.time_unit_var, "Seconds", "Minutes")
-        self.time_unit_dropdown.pack()
+        self.time_unit_dropdown = tk.OptionMenu(self.plot_config_frame, self.time_unit_var, "Seconds", "Minutes", "Hours")
+        self.time_unit_dropdown.pack(side=tk.LEFT)
 
         # Create the line or scatter selection label
-        self.line_or_scatter_label = tk.Label(master, text="Line or scatter selection:")
-        self.line_or_scatter_label.pack()
+        self.line_or_scatter_label = tk.Label(self.plot_config_frame, text="Line or scatter selection:")
+        self.line_or_scatter_label.pack(side=tk.LEFT)
 
         # Create the line or scatter selection dropdown menu
-        self.line_or_scatter_dropdown = tk.OptionMenu(master, self.line_or_scatter, "Line", "Scatter")
-        self.line_or_scatter_dropdown.pack()
+        self.line_or_scatter_dropdown = tk.OptionMenu(self.plot_config_frame, self.line_or_scatter, "Line", "Scatter")
+        self.line_or_scatter_dropdown.pack(side=tk.LEFT)
+
+        # Create the button frame
+        self.button_frame = tk.Frame(master)
+        self.button_frame.pack()
 
         # Create the plot button
-        self.plot_button = tk.Button(master, text="Plot data", command=self.plot_data)
-        self.plot_button.pack()
+        self.plot_button = tk.Button(self.button_frame, text="Plot data", command=self.plot_data)
+        self.plot_button.pack(side=tk.LEFT)
 
         # Create the exit button
-        self.exit_button = tk.Button(master, text="Exit", command=master.quit)
-        self.exit_button.pack()
+        self.exit_button = tk.Button(self.button_frame, text="Exit", command=master.quit)
+        self.exit_button.pack(side=tk.LEFT)
 
         self.time_sec = None
         self.time_min = None
@@ -278,7 +317,7 @@ class DWSPapyrusGUI:
 
         data_x, data_y = None, None
         if x_var == "Time":
-            data_x = self.time_sec if time_unit == "Seconds" else self.time_min
+            data_x = self.time_sec if time_unit == "Seconds" else self.time_min if time_unit == "Minutes" else self.time_min / 60 if time_unit == "Hours" else None
         elif x_var == "Temperature":
             data_x = self.df.iloc[1:, self.temperature_sensor_num + 3] / 10
         elif x_var == "Pressure":
@@ -300,6 +339,17 @@ class DWSPapyrusGUI:
 
         ax.set_xlabel(x_label)
         ax.set_ylabel(y_label)
+
+        # Adjust the x and y scales
+        x_scale = self.x_scale_entry.get()
+        y_scale = self.y_scale_entry.get()
+
+        if x_scale != "":
+            x_scale = x_scale.split(",")
+            ax.set_xlim(float(x_scale[0]), float(x_scale[1]))
+        if y_scale != "":
+            y_scale = y_scale.split(",")
+            ax.set_ylim(float(y_scale[0]), float(y_scale[1]))
 
         # Tightly fit the plot
         fig.tight_layout()
