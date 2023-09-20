@@ -5,7 +5,7 @@
 <a href="https://www.buymeacoffee.com/woojingo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 120px !important;" ></a>
 
 ## 🗞️ NEWS
-@2023-09-20: **V1.2**이 업데이트되었어요! [이 곳](https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus)을 확인해보세요!
+@2023-09-20: **V1.2**이 업데이트되었어요! [이 곳](https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus-v1.2)을 확인해보세요!
 
 ## 📄 개요
 혹시... 이 프로그램이 익숙하신가요? 
@@ -18,7 +18,7 @@
 - 그려진 그래프가 마음에 드시나요? `.png`, `.jpg`, `.pdf`, 혹은 `.svg` 의 형태로 해당 그래프를 저장하는 게 가능해요. 
 
 ## ⚙️ 설치 방법
-1. [링크](https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus)를 누르고 들어가 `.dmg` (MacOS를 사용하시는 경우) 혹은 `.exe` (Windows를 사용하시는 경우)를 다운 받아 설치해주세요.</br>
+1. [링크](https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus-v1.2)를 누르고 들어가 `.dmg` (MacOS를 사용하시는 경우) 혹은 `.exe` (Windows를 사용하시는 경우)를 다운 받아 설치해주세요.</br>
 2. 처음 실행 시 실행에 다소 많은 시간이 걸릴 수 있어요. 
 3. 윈도우의 경우, 프로그램 실행 시 바이러스로 오인될 수 있는데, 필자는 해당 프로그램을 통해 그 어떤 정보도 전송받지 않음을 말씀드립니다 (소스 코드를 확인해주세요). 
 
