@@ -1,7 +1,12 @@
-import tkinter as tk
-from tkinter import filedialog, messagebox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QTextEdit, QCheckBox, QLineEdit, QFileDialog, QWidget, QMessageBox, QDialog, QFrame
+from PyQt5.QtCore import Qt
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QPixmap
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+import sys
 import pandas as pd
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
 def rcparams():
@@ -56,260 +61,322 @@ def rcparams():
     rcParams['xtick.direction'] = 'in'
     rcParams['ytick.direction'] = 'in'
 
-rcparams()
+# Create the main window class
+class DWSPapyrusGUI(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-class DWSPapyrusGUI:
-    def __init__(self, master):
-        self.master = master
-        master.title("DWSPapyrus V1.1")
+        # Set window properties
+        self.setWindowTitle("DWSPapyrus")
+        
+        # Initialize UI components
+        self.initUI()
 
-        self.x_var_var = tk.StringVar(value="Temperature") # Define the x_var_var variable
-        self.y_var_var = tk.StringVar(value="Pressure")
-        self.x_label_var = tk.StringVar(value="Temperature (Celcius)")
-        self.y_label_var = tk.StringVar(value="Pressure (bar)")
-        self.dpi_var = tk.StringVar(value="200")
-        self.transparent_var = tk.BooleanVar(value=True)
-        self.time_unit_var = tk.StringVar(value="Seconds")
-        self.line_width = tk.IntVar(value=2)
-        self.line_or_scatter = tk.StringVar(value="Line")
-        self.check_rcparams = tk.BooleanVar(value=True)
-        self.x_scale = tk.StringVar(value="0, 100")
-        self.y_scale = tk.StringVar(value="0, 100")
+    def initUI(self):
+        central_widget = QWidget(self)
+        self.setCentralWidget(central_widget)
+        
+        layout = QVBoxLayout()
 
-        # Create the title label
-        self.title_label = tk.Label(master, text="DWSPapyrus V1.1", font=("Arial", 24))
-        self.title_label.pack()
+        # Dividing section with line 
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        layout.addWidget(line)
+        
+        # Title 
+        layout.addWidget(QLabel("DWSPapyrus", font=QtGui.QFont("Arial", 20, QtGui.QFont.Bold), alignment=Qt.AlignCenter))
 
-        # Create the author label
-        self.author_label = tk.Label(master, text="by @wjgoarxiv (https://github.com/wjgoarxiv)", font=("Arial", 12))
-        self.author_label.pack()
+        # Version 
+        layout.addWidget(QLabel("Version 1.2", font=QtGui.QFont("Arial", 12, QtGui.QFont.Bold), alignment=Qt.AlignCenter))
 
-        # Create the data loading frame
-        self.data_loading_frame = tk.Frame(master)
-        self.data_loading_frame.pack()
+        # Author
+        layout.addWidget(QLabel("Author: @wjgoarxiv", font=QtGui.QFont("Arial", 12, QtGui.QFont.Bold), alignment=Qt.AlignCenter))
 
-        # Create the pressure sensor selection label
-        self.pressure_label = tk.Label(self.data_loading_frame, text="Pressure sensor selection:")
-        self.pressure_label.pack(side=tk.LEFT)
+        # Links
+        hlayout = QHBoxLayout()
+        self.github_button = QPushButton("About DWSPapyrus")
+        self.github_button.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/wjgoarxiv/DWSPapyrus")))
+        hlayout.addWidget(self.github_button)
 
-        # Create the pressure sensor selection dropdown menu
-        self.pressure_var = tk.StringVar(master)
-        self.pressure_var.set("1") # Default value
-        self.pressure_dropdown = tk.OptionMenu(self.data_loading_frame, self.pressure_var, "1", "2")
-        self.pressure_dropdown.pack(side=tk.LEFT)
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the temperature sensor selection label
-        self.temperature_label = tk.Label(self.data_loading_frame, text="Temperature sensor selection:")
-        self.temperature_label.pack(side=tk.LEFT)
+        self.wjgoarxiv_github_button = QPushButton("My GitHub")
+        self.wjgoarxiv_github_button.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://github.com/wjgoarxiv")))
+        hlayout.addWidget(self.wjgoarxiv_github_button)
 
-        # Create the temperature sensor selection dropdown menu
-        self.temperature_var = tk.StringVar(master)
-        self.temperature_var.set("1") # Default value
-        self.temperature_dropdown = tk.OptionMenu(self.data_loading_frame, self.temperature_var, "1", "2", "3", "4")
-        self.temperature_dropdown.pack(side=tk.LEFT)
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the load button
-        self.load_button = tk.Button(self.data_loading_frame, text="Load the raw CSV", command=self.load_csv) 
-        self.load_button.pack(side=tk.LEFT)
+        self.wjgoarxiv_hp_button = QPushButton("My Homepage")
+        self.wjgoarxiv_hp_button.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://woojingo.site")))
+        hlayout.addWidget(self.wjgoarxiv_hp_button)
 
-        # Create the data preview frame
-        self.data_preview_frame = tk.Frame(master)
-        self.data_preview_frame.pack()
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the data preview label
-        self.data_preview_label = tk.Label(self.data_preview_frame, text="Data preview:", font=("Arial", 12))
-        self.data_preview_label.pack(side=tk.LEFT)
+        self.donate_button = QPushButton("Donate me!")
+        self.donate_button.clicked.connect(lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl("https://www.buymeacoffee.com/woojingo")))
+        hlayout.addWidget(self.donate_button)
 
-        # Create the data preview text box
-        self.data_preview_text = tk.Text(self.data_preview_frame, height=10, width=50)
-        self.data_preview_text.pack(side=tk.LEFT)
+        layout.addLayout(hlayout)
 
-        # Create the treated data frame
-        self.treated_data_frame = tk.Frame(master)
-        self.treated_data_frame.pack()
+        # Data loading
+        self.pressure_dropdown = QComboBox()
+        self.pressure_dropdown.addItems(['1', '2'])
+        self.temperature_dropdown = QComboBox()
+        self.temperature_dropdown.addItems(['1', '2', '3', '4'])
+        self.load_button = QPushButton("Load the raw CSV")
 
-        # Create the treated data label
-        self.treated_data_label = tk.Label(self.treated_data_frame, text="Treated data:", font=("Arial", 12))
-        self.treated_data_label.pack(side=tk.LEFT)
+        # Dividing section with line 
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        layout.addWidget(line)
+        
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel("Pressure sensor selection:"))
+        hlayout.addWidget(self.pressure_dropdown)
 
-        # Create the treated data text box
-        self.treated_data_text = tk.Text(self.treated_data_frame, height=10, width=50)
-        self.treated_data_text.pack(side=tk.LEFT)
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the plot configuration frame
-        self.plot_config_frame = tk.Frame(master)
-        self.plot_config_frame.pack()
+        hlayout.addWidget(QLabel("Temperature sensor selection:"))
+        hlayout.addWidget(self.temperature_dropdown)
+        hlayout.addWidget(self.load_button)
+        layout.addLayout(hlayout)
 
-        # Create the x variable selection label
-        self.x_var_label = tk.Label(self.plot_config_frame, text="X variable selection:")
-        self.x_var_label.pack(side=tk.LEFT)
+        self.load_button.clicked.connect(self.load_csv)
 
-        # Create the x variable selection dropdown menu
-        self.x_var_dropdown = tk.OptionMenu(self.plot_config_frame, self.x_var_var, "Time", "Temperature", "Pressure")
-        self.x_var_dropdown.pack(side=tk.LEFT)
+        # Create the Data preview section
+        self.data_preview_widget = QWidget()
+        self.data_preview_layout = QVBoxLayout()
+        self.data_preview = QTextEdit()
+        self.data_preview_layout.addWidget(QLabel("Data preview:"))
+        self.data_preview_layout.addWidget(self.data_preview)
+        self.data_preview_widget.setLayout(self.data_preview_layout)
 
-        # Create the y variable selection label
-        self.y_var_label = tk.Label(self.plot_config_frame, text="Y variable selection:")
-        self.y_var_label.pack(side=tk.LEFT)
+        # Create the Treated data section
+        self.treated_data_widget = QWidget()
+        self.treated_data_layout = QVBoxLayout()
+        self.treated_data = QTextEdit()
+        self.treated_data_layout.addWidget(QLabel("Treated data:"))
+        self.treated_data_layout.addWidget(self.treated_data)
+        self.treated_data_widget.setLayout(self.treated_data_layout)
 
-        # Create the y variable selection dropdown menu
-        self.y_var_dropdown = tk.OptionMenu(self.plot_config_frame, self.y_var_var, "Pressure", "Temperature")
-        self.y_var_dropdown.pack(side=tk.LEFT)
+        # Add the Data preview and Treated data widgets to a QHBoxLayout
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.data_preview_widget)
 
-        # Create the x label selection label
-        self.x_label_label = tk.Label(self.plot_config_frame, text="Write the x label:")
-        self.x_label_label.pack()
+        # Dividing section with line  
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the x label selection menu
-        self.x_label_dropdown = tk.Entry(self.plot_config_frame, textvariable=self.x_label_var)
-        self.x_label_dropdown.pack()
+        hlayout.addWidget(self.treated_data_widget)
+        layout.addLayout(hlayout)
 
-        # Create the y label selection label
-        self.y_label_label = tk.Label(self.plot_config_frame, text="Write the y label:")
-        self.y_label_label.pack()
+        # Plot Configuration
+        self.x_var_dropdown = QComboBox()
+        self.x_var_dropdown.addItems(['Time', 'Temperature', 'Pressure'])
+        self.y_var_dropdown = QComboBox()
+        self.y_var_dropdown.addItems(['Pressure', 'Temperature'])
+        self.x_label = QLineEdit("Time")
+        self.y_label = QLineEdit("Pressure")
+        self.x_scale = QLineEdit("")
+        self.y_scale = QLineEdit("")
+        self.dpi = QLineEdit("300")
+        self.transparent = QCheckBox("Transparent background")
+        self.line_width = QLineEdit("2")
+        
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel("X variable selection:"))
+        hlayout.addWidget(self.x_var_dropdown)
 
-        # Create the y label selection text box
-        self.y_label_dropdown = tk.Entry(self.plot_config_frame, textvariable=self.y_label_var)
-        self.y_label_dropdown.pack()
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the x-scale adjustment label (min, max)
-        self.x_scale_label = tk.Label(self.plot_config_frame, text="X scale adjustment (min, max):")
-        self.x_scale_label.pack()
+        hlayout.addWidget(QLabel("Y variable selection:"))
+        hlayout.addWidget(self.y_var_dropdown)
+        layout.addLayout(hlayout)
 
-        # Create the x-scale adjustment text box (min, max)
-        self.x_scale_entry = tk.Entry(self.plot_config_frame) 
-        self.x_scale_entry.pack()
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel("Write the X label:"))
+        hlayout.addWidget(self.x_label)
 
-        # Create the y-scale adjustment label (min, max)
-        self.y_scale_label = tk.Label(self.plot_config_frame, text="Y scale adjustment (min, max):")
-        self.y_scale_label.pack()
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the y-scale adjustment text box (min, max)
-        self.y_scale_entry = tk.Entry(self.plot_config_frame)
-        self.y_scale_entry.pack()
+        hlayout.addWidget(QLabel("Write the Y label:"))
+        hlayout.addWidget(self.y_label)
+        layout.addLayout(hlayout)
 
-        # Create the DPI selection label
-        self.dpi_label = tk.Label(self.plot_config_frame, text="DPI selection:")
-        self.dpi_label.pack()
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel("X scale adjustment (min, max):"))
+        hlayout.addWidget(self.x_scale)
 
-        # Create the DPI selection text box
-        self.dpi_entry = tk.Entry(self.plot_config_frame, textvariable=self.dpi_var)
-        self.dpi_entry.pack()
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the transparency selection box
-        self.transparent_label = tk.Label(self.plot_config_frame, text="Transparent background:")
-        self.transparent_label.pack()
+        hlayout.addWidget(QLabel("Y scale adjustment (min, max):"))
+        hlayout.addWidget(self.y_scale)
+        layout.addLayout(hlayout)
 
-        # Create the transparency selection check box
-        self.transparent_check = tk.Checkbutton(self.plot_config_frame, variable=self.transparent_var)
-        self.transparent_check.pack()
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel("DPI selection:"))
+        hlayout.addWidget(self.dpi) 
 
-        # Create the line width selection label
-        self.line_width_label = tk.Label(self.plot_config_frame, text="Line width (Markersize) selection:")
-        self.line_width_label.pack(side=tk.LEFT)
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the line width selection text box
-        self.line_width_entry = tk.Entry(self.plot_config_frame, textvariable=self.line_width)
-        self.line_width_entry.pack(side=tk.LEFT)
+        hlayout.addWidget(QLabel("Transparent background:"))
+        hlayout.addWidget(self.transparent)
+        layout.addLayout(hlayout)
 
-        # Create the time unit selection label
-        self.time_unit_label = tk.Label(self.plot_config_frame, text="Time unit selection:")
-        self.time_unit_label.pack(side=tk.LEFT)
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel("Line width selection:"))
+        hlayout.addWidget(self.line_width)
 
-        # Create the time unit selection dropdown menu
-        self.time_unit_dropdown = tk.OptionMenu(self.plot_config_frame, self.time_unit_var, "Seconds", "Minutes", "Hours")
-        self.time_unit_dropdown.pack(side=tk.LEFT)
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the line or scatter selection label
-        self.line_or_scatter_label = tk.Label(self.plot_config_frame, text="Line or scatter selection:")
-        self.line_or_scatter_label.pack(side=tk.LEFT)
+        # Time unit selection
+        self.time_unit_dropdown = QComboBox()
+        self.time_unit_dropdown.addItems(['Seconds', 'Minutes', 'Hours'])
+        hlayout.addWidget(QLabel("Time unit selection:"))
+        hlayout.addWidget(self.time_unit_dropdown)
+        
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the line or scatter selection dropdown menu
-        self.line_or_scatter_dropdown = tk.OptionMenu(self.plot_config_frame, self.line_or_scatter, "Line", "Scatter")
-        self.line_or_scatter_dropdown.pack(side=tk.LEFT)
+        # Line or scatter
+        self.line_or_scatter = QComboBox()
+        self.line_or_scatter.addItems(['Line', 'Scatter'])
+        hlayout.addWidget(QLabel("Line or scatter:"))
+        hlayout.addWidget(self.line_or_scatter)
+        layout.addLayout(hlayout)
 
-        # Create the button frame
-        self.button_frame = tk.Frame(master)
-        self.button_frame.pack()
+        # Dividing section with line 
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        layout.addWidget(line)
+      
+        # Buttons
+        hlayout = QHBoxLayout()
+        self.plot_button = QPushButton("Plot data")
+        self.plot_button.clicked.connect(self.plot_data)
+        hlayout.addWidget(self.plot_button)
 
-        # Create the plot button
-        self.plot_button = tk.Button(self.button_frame, text="Plot data", command=self.plot_data)
-        self.plot_button.pack(side=tk.LEFT)
+        # Dividing section with line
+        line = QFrame()
+        line.setFrameShape(QFrame.VLine)
+        line.setFrameShadow(QFrame.Sunken)
+        hlayout.addWidget(line)
 
-        # Create the exit button
-        self.exit_button = tk.Button(self.button_frame, text="Exit", command=master.quit)
-        self.exit_button.pack(side=tk.LEFT)
+        self.exit_button = QPushButton("Exit")
+        self.exit_button.clicked.connect(self.close)
+        hlayout.addWidget(self.exit_button)
 
-        self.time_sec = None
-        self.time_min = None
-        self.df = None
-        self.temperature_sensor_num = None
+        layout.addLayout(hlayout)
+        central_widget.setLayout(layout)
 
     def load_csv(self):
-        # Open a file dialog to select the CSV file
-        file_path = filedialog.askopenfilename()
+      # Open a file dialog to select the CSV file
+      file_path, _ = QFileDialog.getOpenFileName(self, "Load the raw CSV", "", "CSV Files (*.csv);;All Files (*)")
 
-        try:
-            # Load the CSV file
-            df = pd.read_csv(file_path, encoding="cp949", header=1)
+      try:
+          # Load the CSV file
+          df = pd.read_csv(file_path, encoding="cp949", header=1)
 
-            # Get the selected pressure and temperature sensor numbers
-            self.pressure_sensor_num = int(self.pressure_var.get())
-            self.temperature_sensor_num = int(self.temperature_var.get())
+          # Get the selected pressure and temperature sensor numbers
+          self.pressure_sensor_num = int(self.pressure_dropdown.currentText())
+          self.temperature_sensor_num = int(self.temperature_dropdown.currentText())
 
-            # Get the pressure, temperature, and time data
-            pressure = df.iloc[1:, self.pressure_sensor_num + 1].astype(float)
-            raw_temp = df.iloc[1:, self.temperature_sensor_num + 3].astype(float)
-            temp = raw_temp / 10 # Convert raw temperature to real temperature
-            
-            # Make time_sec universal
-            self.time_sec = df.iloc[1:, 1].astype(float)
-            self.time_min = self.time_sec / 60 # Convert time from second to minute
+          # Get the pressure, temperature, and time data
+          pressure = df.iloc[1:, self.pressure_sensor_num + 1].astype(float)
+          raw_temp = df.iloc[1:, self.temperature_sensor_num + 3].astype(float)
+          temp = raw_temp / 10 # Convert raw temperature to real temperature
 
-            # Update the data preview text box
-            self.data_preview_text.delete('1.0', tk.END)
-            self.data_preview_text.insert(tk.END, "Pressure data:\n")
-            self.data_preview_text.insert(tk.END, str(pressure.head()) + "\n\n")
-            self.data_preview_text.insert(tk.END, "Temperature data:\n")
-            self.data_preview_text.insert(tk.END, str(temp.head()))
+          # Make time_sec universal
+          self.time_sec = df.iloc[1:, 1].astype(float)
+          self.time_min = self.time_sec / 60 # Convert time from second to minute
 
-            pressure_mean = pressure.mean()
-            pressure_std = pressure.std()
-            temp_mean = temp.mean()
-            temp_std = temp.std()
+          # Update the data preview text box
+          self.data_preview.clear()
+          self.data_preview.append("Pressure data:\n")
+          self.data_preview.append(str(pressure.head()) + "\n\n")
+          self.data_preview.append("Temperature data:\n")
+          self.data_preview.append(str(temp.head()))
 
-            self.treated_data_text.delete('1.0', tk.END)
-            self.treated_data_text.insert(tk.END, "Treated data:\n")
-            self.treated_data_text.insert(tk.END, f"Pressure mean: {pressure_mean:.2f}\n")
-            self.treated_data_text.insert(tk.END, f"Pressure std: {pressure_std:.2f}\n")
-            self.treated_data_text.insert(tk.END, f"Temperature mean: {temp_mean:.2f}\n")
-            self.treated_data_text.insert(tk.END, f"Temperature std: {temp_std:.2f}\n")
+          pressure_mean = pressure.mean()
+          pressure_std = pressure.std()
+          temp_mean = temp.mean()
+          temp_std = temp.std()
 
-            # Show a success message
-            self.show_message("CSV file loaded successfully.", "blue")
+          self.treated_data.clear()
+          self.treated_data.append("Treated data:\n")
+          self.treated_data.append(f"Pressure mean: {pressure_mean:.2f}\n")
+          self.treated_data.append(f"Pressure std: {pressure_std:.2f}\n")
+          self.treated_data.append(f"Temperature mean: {temp_mean:.2f}\n")
+          self.treated_data.append(f"Temperature std: {temp_std:.2f}\n")
 
-            self.df = df
+          # Show a success message
+          QMessageBox.information(self, "Success", "CSV file loaded successfully.")
 
-        except Exception as e:
-            # Show an error message
-            self.show_message(str(e), "red")
+          self.df = df
 
-    def show_message(self, message, color):
-        # Create a message label
-        message_label = tk.Label(self.master, text=message, fg=color)
-        message_label.pack()
-
-        # Remove the message after 3 seconds
-        self.master.after(3000, message_label.destroy)
+      except Exception as e:
+          # Show an error message
+          QMessageBox.critical(self, "Error", f"Error loading CSV file: {str(e)}")
 
     def plot_data(self):
-        x_var = self.x_var_var.get()
-        y_var = self.y_var_var.get()
-        x_label = self.x_label_var.get()
-        y_label = self.y_label_var.get()
-        dpi = int(self.dpi_var.get())
-        transparent = self.transparent_var.get()
-        time_unit = self.time_unit_var.get()
+        
+        # Warn user if no data is loaded
+        if not hasattr(self, "df"):
+            QMessageBox.critical(self, "Error", "No data loaded.")
+            return
+        
+        x_var = self.x_var_dropdown.currentText()
+        y_var = self.y_var_dropdown.currentText()
+        x_label = self.x_label.text()
+        y_label = self.y_label.text()
+        dpi = int(self.dpi.text())
+        transparent = self.transparent.isChecked()
+        time_unit = self.time_unit_dropdown.currentText() 
+        line_width = int(self.line_width.text())
 
         fig, ax = plt.subplots()
 
@@ -329,20 +396,20 @@ class DWSPapyrusGUI:
             data_y = self.df.iloc[1:, self.temperature_sensor_num + 3] / 10 
 
         if data_x is None or data_y is None:
-            self.show_message("Error: Missing Data", "red")
+            QMessageBox.critical(self, "Error", "Missing Data")
             return
-
-        if self.line_or_scatter.get() == "Line":
-            ax.plot(data_x, data_y, color="black", linewidth=self.line_width.get())
-        elif self.line_or_scatter.get() == "Scatter":
-            ax.scatter(data_x, data_y, color="black", s=self.line_width.get()*2)
+        
+        if self.line_or_scatter.currentText() == "Line":
+            ax.plot(data_x, data_y, color="black", linewidth=line_width)
+        elif self.line_or_scatter.currentText() == "Scatter":
+            ax.scatter(data_x, data_y, color="black", s = line_width * 2)
 
         ax.set_xlabel(x_label)
         ax.set_ylabel(y_label)
 
-        # Adjust the x and y scales
-        x_scale = self.x_scale_entry.get()
-        y_scale = self.y_scale_entry.get()
+        # Adjust the x and y scale 
+        x_scale = self.x_scale.text()
+        y_scale = self.y_scale.text()
 
         if x_scale != "":
             x_scale = x_scale.split(",")
@@ -354,11 +421,47 @@ class DWSPapyrusGUI:
         # Tightly fit the plot
         fig.tight_layout()
 
-        fig.set_dpi(dpi)
-        fig.savefig("PLOT.png", dpi=dpi, transparent=transparent, bbox_inches='tight')
-        plt.show()
-        self.show_message("Plot saved successfully.", "blue")
+        # Preview the plot to the user
+        canvas = FigureCanvas(fig)
 
-root = tk.Tk()
-gui = DWSPapyrusGUI(root)
-root.mainloop()
+        # Create a new QDialog object to act as the parent widget for the canvas
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Plot Preview")
+        dialog.setLayout(QVBoxLayout())
+        dialog.layout().addWidget(canvas)
+
+        # Add the Confirm and Cancel buttons to the QDialog
+        hlayout = QHBoxLayout()
+        confirm_button = QPushButton("Confirm")
+        confirm_button.clicked.connect(dialog.accept)
+        hlayout.addWidget(confirm_button)
+        cancel_button = QPushButton("Cancel")
+        cancel_button.clicked.connect(dialog.reject)
+        hlayout.addWidget(cancel_button)
+        dialog.layout().addLayout(hlayout)
+
+        # Show the plot preview to the user
+        if dialog.exec_() == QDialog.Accepted:
+          # Get the file format from the user
+          file_format, _ = QFileDialog.getSaveFileName(self, "Save the plot", "", "PNG Files (*.png);;JPG Files (*.jpg);;PDF Files (*.pdf);;SVG Files (*.svg);;All Files (*)")
+
+          if file_format:
+              
+              # Get the file extension 
+              file_ext = file_format.split(".")[-1]
+
+              # Save the plot to the file. 
+              fig.savefig(file_format, format=file_ext, dpi=dpi, transparent=transparent, bbox_inches="tight")
+
+              # Show a success message to the user
+              QMessageBox.information(self, "Success", "Plot saved successfully as {} file.".format(file_ext.upper()))
+          else: 
+              # Show an error message to the user
+              QMessageBox.critical(self, "Error", "Error saving the plot.")
+        
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    gui = DWSPapyrusGUI()
+    gui.show()
+    sys.exit(app.exec_())
