@@ -88,7 +88,7 @@ class DWSPapyrusGUI(QMainWindow):
         layout.addWidget(QLabel("DWSPapyrus", font=QtGui.QFont("Arial", 20, QtGui.QFont.Bold), alignment=Qt.AlignCenter))
 
         # Version 
-        layout.addWidget(QLabel("Version 1.2", font=QtGui.QFont("Arial", 12, QtGui.QFont.Bold), alignment=Qt.AlignCenter))
+        layout.addWidget(QLabel("Version 1.2.1", font=QtGui.QFont("Arial", 12, QtGui.QFont.Bold), alignment=Qt.AlignCenter))
 
         # Author
         layout.addWidget(QLabel("Author: @wjgoarxiv", font=QtGui.QFont("Arial", 12, QtGui.QFont.Bold), alignment=Qt.AlignCenter))
@@ -138,6 +138,25 @@ class DWSPapyrusGUI(QMainWindow):
         self.temperature_dropdown.addItems(['1', '2', '3', '4'])
         self.load_button = QPushButton("Load the raw CSV")
 
+        # Add the function to divide pressure by:
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel("Divide pressure by:"))
+        self.divide_pressure_by = QLineEdit("1")
+        hlayout.addWidget(self.divide_pressure_by)
+        layout.addLayout(hlayout)
+
+        # Add the function to divide temp. by:
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        layout.addWidget(line)
+
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(QLabel("Divide temperature by:"))
+        self.divide_temp_by = QLineEdit("10")
+        hlayout.addWidget(self.divide_temp_by)
+        layout.addLayout(hlayout)
+
         # Dividing section with line 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
@@ -160,6 +179,12 @@ class DWSPapyrusGUI(QMainWindow):
         layout.addLayout(hlayout)
 
         self.load_button.clicked.connect(self.load_csv)
+
+        # Dividing section with line 
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        layout.addWidget(line)
 
         # Create the Data preview section
         self.data_preview_widget = QWidget()
@@ -327,8 +352,10 @@ class DWSPapyrusGUI(QMainWindow):
 
           # Get the pressure, temperature, and time data
           pressure = df.iloc[1:, self.pressure_sensor_num + 1].astype(float)
+          pres = pressure / float(self.divide_pressure_by.text())
+
           raw_temp = df.iloc[1:, self.temperature_sensor_num + 3].astype(float)
-          temp = raw_temp / 10 # Convert raw temperature to real temperature
+          temp = raw_temp / float(self.divide_temp_by.text())
 
           # Make time_sec universal
           self.time_sec = df.iloc[1:, 1].astype(float)
@@ -337,19 +364,19 @@ class DWSPapyrusGUI(QMainWindow):
           # Update the data preview text box
           self.data_preview.clear()
           self.data_preview.append("Pressure data:\n")
-          self.data_preview.append(str(pressure.head()) + "\n\n")
+          self.data_preview.append(str(pres.head()) + "\n\n")
           self.data_preview.append("Temperature data:\n")
           self.data_preview.append(str(temp.head()))
 
-          pressure_mean = pressure.mean()
-          pressure_std = pressure.std()
+          pres_mean = pres.mean()
+          pres_std = pres.std()
           temp_mean = temp.mean()
           temp_std = temp.std()
 
           self.treated_data.clear()
           self.treated_data.append("Treated data:\n")
-          self.treated_data.append(f"Pressure mean: {pressure_mean:.2f}\n")
-          self.treated_data.append(f"Pressure std: {pressure_std:.2f}\n")
+          self.treated_data.append(f"Pressure mean: {pres_mean:.2f}\n")
+          self.treated_data.append(f"Pressure std: {pres_std:.2f}\n")
           self.treated_data.append(f"Temperature mean: {temp_mean:.2f}\n")
           self.treated_data.append(f"Temperature std: {temp_std:.2f}\n")
 
@@ -386,14 +413,14 @@ class DWSPapyrusGUI(QMainWindow):
         if x_var == "Time":
             data_x = self.time_sec if time_unit == "Seconds" else self.time_min if time_unit == "Minutes" else self.time_min / 60 if time_unit == "Hours" else None
         elif x_var == "Temperature":
-            data_x = self.df.iloc[1:, self.temperature_sensor_num + 3] / 10
+            data_x = self.df.iloc[1:, self.temperature_sensor_num + 3] / float(self.divide_temp_by.text())
         elif x_var == "Pressure":
-            data_x = self.df.iloc[1:, self.pressure_sensor_num + 1]
+            data_x = self.df.iloc[1:, self.pressure_sensor_num + 1] / float(self.divide_pressure_by.text())
 
         if y_var == "Pressure":
-            data_y = self.df.iloc[1:, self.pressure_sensor_num + 1]
+            data_y = self.df.iloc[1:, self.pressure_sensor_num + 1] / float(self.divide_pressure_by.text())
         elif y_var == "Temperature":
-            data_y = self.df.iloc[1:, self.temperature_sensor_num + 3] / 10 
+            data_y = self.df.iloc[1:, self.temperature_sensor_num + 3] / float(self.divide_temp_by.text())
 
         if data_x is None or data_y is None:
             QMessageBox.critical(self, "Error", "Missing Data")
