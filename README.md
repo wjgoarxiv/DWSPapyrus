@@ -6,6 +6,7 @@
 
 ## 🗞️ NEWS
 @2023-09-20: **V1.2**이 업데이트되었어요! [이 곳](https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus-v1.2)을 확인해보세요!
+@2023-10-17: **V1.2.1**이 업데이트되었어요.
 
 ## 📄 개요
 혹시... 이 프로그램이 익숙하신가요? 
