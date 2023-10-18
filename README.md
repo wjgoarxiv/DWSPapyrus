@@ -5,7 +5,7 @@
 <a href="https://www.buymeacoffee.com/woojingo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 120px !important;" ></a>
 
 ## 🗞️ NEWS
-@2023-09-20: **V1.2**이 업데이트되었어요! [이 곳](https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus-v1.2)을 확인해보세요!
+@2023-09-20: **V1.2**이 업데이트되었어요! [이 곳](https://github.com/wjgoarxiv/DWSPapyrus/releases/tag/DWSPapyrus-v1.2)을 확인해보세요! </br>
 @2023-10-17: **V1.2.1**이 업데이트되었어요.
 
 ## 📄 개요
