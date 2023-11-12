@@ -1,7 +1,7 @@
 # DWSPapyrus
 ::자동 DWStemp (동원 프로그램) 그래프 제작 프로그램::
 
-<img src="./Assets/Cover.png" Width="70%">
+<img src="./Assets/RCover.png" Width="70%">
 <a href="https://www.buymeacoffee.com/woojingo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 120px !important;" ></a>
 
 ## 📷 쇼케이스
